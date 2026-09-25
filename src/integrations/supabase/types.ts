@@ -14,7 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          cancellation_reason: string | null
+          created_at: string
+          date: string
+          id: string
+          kind: string
+          owner_id: string
+          patient_id: string
+          status: string
+          time: string
+          updated_at: string
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          created_at?: string
+          date: string
+          id?: string
+          kind?: string
+          owner_id?: string
+          patient_id: string
+          status?: string
+          time: string
+          updated_at?: string
+        }
+        Update: {
+          cancellation_reason?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          kind?: string
+          owner_id?: string
+          patient_id?: string
+          status?: string
+          time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          birth_date: string | null
+          cpf: string
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          owner_id: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          birth_date?: string | null
+          cpf: string
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          birth_date?: string | null
+          cpf?: string
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      schedule_settings: {
+        Row: {
+          end_time: string
+          interval_minutes: number
+          owner_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          end_time?: string
+          interval_minutes?: number
+          owner_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Update: {
+          end_time?: string
+          interval_minutes?: number
+          owner_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
