@@ -12,7 +12,7 @@ type Patient = { id: string; full_name: string; phone: string; convenio: string 
 type Appointment = { id: string; patient_id: string; date: string; time: string; status: string; kind: string; cancellation_reason: string | null };
 type Schedule = { start_time: string; end_time: string; interval_minutes: number };
 type View = "agenda" | "pacientes" | "relatorios" | "canceladas" | "configuracoes";
-const patientSchema = z.object({ full_name: z.string().trim().min(2, "Informe o nome completo.").max(120), phone: z.string().trim().min(8, "Informe um telefone válido.").max(30), convenio: z.string().trim().max(120, "O convênio deve ter até 120 caracteres.").refine(v => !v || v.length >= 2, "Informe ao menos 2 caracteres para o convênio."), birth_date: z.string().optional(), email: z.union([z.literal(""), z.string().email("E-mail inválido.").max(255)]), notes: z.string().max(2000) });
+const patientSchema = z.object({ full_name: z.string().trim().min(2, "Informe o nome completo.").max(120), phone: z.string().trim().min(8, "Informe um telefone válido.").max(30), convenio: z.string().trim().min(2, "Informe o convênio (ou Particular).").max(120, "O convênio deve ter até 120 caracteres."), birth_date: z.string().optional(), email: z.union([z.literal(""), z.string().email("E-mail inválido.").max(255)]), notes: z.string().max(2000) });
 const today = () => format(new Date(), "yyyy-MM-dd");
 const prettyDate = (date: string) => format(parseISO(date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 const shortDate = (date: string) => format(parseISO(date), "dd/MM/yyyy");
