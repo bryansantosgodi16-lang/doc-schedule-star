@@ -1,4 +1,4 @@
 - [x] Set up private persistent patient, appointment, and schedule data.
-- [ ] Build agenda, patient records, cancellation and rescheduling, and settings.
-- [ ] Verify core booking flow in the running app.
-- [ ] Replace CPF with Convênio throughout patient registration, search, and details.
+- [x] Build agenda, patient records, cancellation and rescheduling, and settings.
+- [x] Verify core booking flow in the running app.
+- [x] Replace CPF with Convênio throughout patient registration, search, and details.
