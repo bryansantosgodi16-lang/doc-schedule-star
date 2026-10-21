@@ -107,6 +107,7 @@ export type Database = {
           owner_id: string
           start_time: string
           updated_at: string
+          week_days: Json | null
         }
         Insert: {
           end_time?: string
@@ -114,6 +115,7 @@ export type Database = {
           owner_id?: string
           start_time?: string
           updated_at?: string
+          week_days?: Json | null
         }
         Update: {
           end_time?: string
@@ -121,6 +123,7 @@ export type Database = {
           owner_id?: string
           start_time?: string
           updated_at?: string
+          week_days?: Json | null
         }
         Relationships: []
       }
