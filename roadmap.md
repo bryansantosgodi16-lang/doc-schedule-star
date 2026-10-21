@@ -2,3 +2,4 @@
 - [x] Build agenda, patient records, cancellation and rescheduling, and settings.
 - [x] Verify core booking flow in the running app.
 - [x] Replace CPF with Convênio throughout patient registration, search, and details.
+- [x] Add per-weekday open/closed and hours to "Horários de funcionamento".
