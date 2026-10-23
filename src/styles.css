@@ -71,8 +71,9 @@
 @utility status-em-atendimento { color: var(--success); background: var(--success-soft); }
 @utility status-concluido { color: var(--success); background: var(--success-soft); }
 @utility status-cancelado { color: var(--destructive); background: var(--danger-soft); }
-@utility status-disponivel { color: var(--primary); background: var(--info-soft); }@media print {
-  body * { visibility: hidden; }
-  .print-area, .print-area * { visibility: visible; }
-  .print-area { position: fixed; inset: 0 0 auto 0; margin: 1cm; }
+@utility status-disponivel { color: var(--primary); background: var(--info-soft); }.print-only { display: none; }
+@media print {
+  body > *:not(.print-only) { display: none !important; }
+  .print-only { display: block; padding: 1cm; }
+  .print-only * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
