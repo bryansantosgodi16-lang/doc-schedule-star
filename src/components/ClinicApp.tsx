@@ -5,19 +5,21 @@ import { ptBR } from "date-fns/locale";
 import santaSaudeLogo from "@/assets/santa-saude.png.asset.json";
 import unimedLogo from "@/assets/unimed.png.asset.json";
 import particularLogo from "@/assets/particular.png.asset.json";
-import { Activity, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, Heart, HeartPulse, LogOut, Menu, MoreVertical, Plus, Search, Settings2, Sun, UserRound, Users, X, Bell, ChartNoAxesColumn, RotateCcw, Pencil, CalendarX2 } from "lucide-react";
+import { Activity, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, Heart, HeartPulse, LogOut, Menu, MoreVertical, Plus, Search, Settings2, Sun, UserRound, Users, X, Bell, ChartNoAxesColumn, RotateCcw, Pencil, CalendarX2, House, Phone, FileText, MapPin, HeartHandshake, Printer, Cross, ClipboardList } from "lucide-react";
+import { differenceInYears } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { z } from "zod";
 
-type Patient = { id: string; full_name: string; phone: string; convenio: string | null; birth_date: string | null; email: string | null; notes: string | null; created_at: string };
+type Patient = { id: string; full_name: string; phone: string; convenio: string | null; birth_date: string | null; email: string | null; notes: string | null; address: string | null; birthplace: string | null; marital_status: string | null; created_at: string };
+const MARITAL = ["Solteiro(a)", "Casado(a)", "União estável", "Divorciado(a)", "Viúvo(a)"] as const;
 type Appointment = { id: string; patient_id: string; date: string; time: string; status: string; kind: string; cancellation_reason: string | null };
 const DAYS = [["1", "Segunda-feira"], ["2", "Terça-feira"], ["3", "Quarta-feira"], ["4", "Quinta-feira"], ["5", "Sexta-feira"], ["6", "Sábado"], ["7", "Domingo"]] as const;
 type DayKey = (typeof DAYS)[number][0]; type DayConfig = { open: boolean; start: string; end: string }; type WeekDays = Record<DayKey, DayConfig>;
 type Schedule = { start_time: string; end_time: string; interval_minutes: number; week_days: WeekDays | null };
 type View = "agenda" | "pacientes" | "relatorios" | "canceladas" | "configuracoes";
-const patientSchema = z.object({ full_name: z.string().trim().min(2, "Informe o nome completo.").max(120), phone: z.string().trim().min(8, "Informe um telefone válido.").max(30), convenio: z.enum(["Santa Saúde", "Unimed", "Particular"], { message: "Selecione o convênio." }), birth_date: z.string().optional(), email: z.union([z.literal(""), z.string().email("E-mail inválido.").max(255)]), notes: z.string().max(2000) });
+const patientSchema = z.object({ full_name: z.string().trim().min(2, "Informe o nome completo.").max(120), phone: z.string().trim().min(8, "Informe um telefone válido.").max(30), convenio: z.enum(["Santa Saúde", "Unimed", "Particular"], { message: "Selecione o convênio." }), birth_date: z.string().optional(), email: z.union([z.literal(""), z.string().email("E-mail inválido.").max(255)]), notes: z.string().max(2000), address: z.string().trim().max(300, "Endereço muito longo."), birthplace: z.string().trim().max(120, "Naturalidade muito longa."), marital_status: z.string().max(40) });
 const today = () => format(new Date(), "yyyy-MM-dd");
 const prettyDate = (date: string) => format(parseISO(date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 const shortDate = (date: string) => format(parseISO(date), "dd/MM/yyyy");
@@ -30,7 +32,24 @@ function Badge({ status }: { status: string }) { return <span className={`inline
 const CONVENIOS = [{ name: "Santa Saúde", logo: santaSaudeLogo.url }, { name: "Unimed", logo: unimedLogo.url }, { name: "Particular", logo: particularLogo.url }] as const;
 function ConvenioTag({ name }: { name: string | null }) { const c = CONVENIOS.find(x => x.name === name); if (!c) return <span className="font-semibold">{name || "—"}</span>; return <span className="inline-flex items-center gap-2 font-semibold"><img src={c.logo} alt={`Logo ${c.name}`} className="h-6 w-auto max-w-[80px] object-contain rounded" />{c.name}</span>; }
 function lastVisitInfo(list: Appointment[], patientId: string, refDate: string) { const last = list.filter(a => a.patient_id === patientId && a.status === "concluído" && a.date <= refDate).sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time))[0]; const days = last ? differenceInCalendarDays(parseISO(refDate), parseISO(last.date)) : null; return { last, days, isReturn: days !== null && days <= 30 }; }
-const emptyForm = { full_name: "", phone: "", convenio: "", birth_date: "", email: "", notes: "" };
+const emptyForm = { full_name: "", phone: "", convenio: "", birth_date: "", email: "", notes: "", address: "", birthplace: "", marital_status: "" };
+function FichaLine({ icon: Icon, label, value }: { icon: typeof UserRound; label: string; value: string }) { return <div className="flex items-end gap-3 min-w-0"><Icon className="size-7 shrink-0 text-secondary-foreground" strokeWidth={1.8} /><span className="font-bold text-secondary-foreground whitespace-nowrap">{label}:</span><span className="flex-1 min-w-0 border-b-2 border-primary/70 pb-0.5 text-foreground min-h-[1.6rem] break-words">{value}</span></div>; }
+function FichaPaciente({ patient }: { patient: Patient | null }) {
+  const birth = patient?.birth_date ? parseISO(patient.birth_date) : null;
+  return <div className="print-area rounded-xl border-2 border-primary bg-card p-5 sm:p-7 text-sm">
+    <div className="flex items-center gap-5 mb-7"><div className="relative size-16 shrink-0 text-secondary-foreground"><Cross className="size-16" strokeWidth={1.6} /><Activity className="size-7 absolute inset-0 m-auto" strokeWidth={2} /></div><div className="w-px h-16 bg-secondary-foreground/60" /><h2 className="text-2xl sm:text-3xl font-extrabold leading-tight text-secondary-foreground uppercase">Ficha de cadastro<br />de paciente</h2></div>
+    <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+      <FichaLine icon={UserRound} label="Nome completo" value={patient?.full_name ?? ""} />
+      <div className="flex items-end gap-3"><CalendarDays className="size-7 shrink-0 text-secondary-foreground" strokeWidth={1.8} /><span className="font-bold text-secondary-foreground whitespace-nowrap">Data de nascimento:</span><span className="flex-1 flex items-end gap-1 text-foreground">{(birth ? [format(birth, "dd"), format(birth, "MM"), format(birth, "yyyy")] : ["", "", ""]).map((v, i) => <span key={i} className="contents">{i > 0 && <span className="font-bold text-secondary-foreground">/</span>}<span className="flex-1 border-b-2 border-primary/70 pb-0.5 text-center min-h-[1.6rem]">{v}</span></span>)}</span></div>
+      <FichaLine icon={House} label="Endereço" value={patient?.address ?? ""} />
+      <FichaLine icon={Phone} label="Telefone" value={patient?.phone ?? ""} />
+      <FichaLine icon={FileText} label="Convênio" value={patient?.convenio ?? ""} />
+      <FichaLine icon={MapPin} label="Naturalidade" value={patient?.birthplace ?? ""} />
+      <FichaLine icon={HeartHandshake} label="Estado civil" value={patient?.marital_status ?? ""} />
+      <FichaLine icon={UserRound} label="Idade" value={birth ? `${differenceInYears(new Date(), birth)} anos` : ""} />
+    </div>
+  </div>;
+}
 
 export function ClinicApp({ user }: { user: User }) {
   const [view, setView] = useState<View>("agenda"); const [date, setDate] = useState(today());
