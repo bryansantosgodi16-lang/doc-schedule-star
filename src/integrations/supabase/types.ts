@@ -63,36 +63,45 @@ export type Database = {
       }
       patients: {
         Row: {
+          address: string | null
           birth_date: string | null
+          birthplace: string | null
           convenio: string | null
           created_at: string
           email: string | null
           full_name: string
           id: string
+          marital_status: string | null
           notes: string | null
           owner_id: string
           phone: string
           updated_at: string
         }
         Insert: {
+          address?: string | null
           birth_date?: string | null
+          birthplace?: string | null
           convenio?: string | null
           created_at?: string
           email?: string | null
           full_name: string
           id?: string
+          marital_status?: string | null
           notes?: string | null
           owner_id?: string
           phone: string
           updated_at?: string
         }
         Update: {
+          address?: string | null
           birth_date?: string | null
+          birthplace?: string | null
           convenio?: string | null
           created_at?: string
           email?: string | null
           full_name?: string
           id?: string
+          marital_status?: string | null
           notes?: string | null
           owner_id?: string
           phone?: string

@@ -71,4 +71,8 @@
 @utility status-em-atendimento { color: var(--success); background: var(--success-soft); }
 @utility status-concluido { color: var(--success); background: var(--success-soft); }
 @utility status-cancelado { color: var(--destructive); background: var(--danger-soft); }
-@utility status-disponivel { color: var(--primary); background: var(--info-soft); }
+@utility status-disponivel { color: var(--primary); background: var(--info-soft); }@media print {
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: fixed; inset: 0 0 auto 0; margin: 1cm; }
+}
