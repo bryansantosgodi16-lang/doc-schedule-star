@@ -4,3 +4,4 @@
 - [x] Replace CPF with Convênio throughout patient registration, search, and details.
 - [x] Add per-weekday open/closed and hours to "Horários de funcionamento".
 - [x] Add "Ficha do paciente" button with printable patient record sheet (endereço, naturalidade, estado civil, idade).
+- [x] Make the "Ficha do paciente" fields fillable before printing, with option to save to the patient record.
