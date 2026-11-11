@@ -5,3 +5,4 @@
 - [x] Add per-weekday open/closed and hours to "Horários de funcionamento".
 - [x] Add "Ficha do paciente" button with printable patient record sheet (endereço, naturalidade, estado civil, idade).
 - [x] Make the "Ficha do paciente" fields fillable before printing, with option to save to the patient record.
+- [ ] Restore and verify email signup/login and Google sign-in.
